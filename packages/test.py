@@ -11,7 +11,7 @@ dotenv_path = 'E:/ShoppingGPT/packages/.env'
 load_dotenv(dotenv_path)
 
 os.environ['GROQ_API_KEY'] = os.getenv('GROQ_API_KEY')
-llm = ChatGroq(temperature=0, model_name="llama3-8b-8192")
+llm = ChatGroq(temperature=0, model_name="llama3-70b-8192")
 
 def main():
     # Example data
@@ -20,7 +20,7 @@ def main():
 
     llm_chain = create_product_manager_chain(llm, df)
 
-    result = llm_chain.invoke({"input": "tôi muốn mua 1 sản phẩm dưới 350k, có thể đề xuất cho tôi 1 số sản phẩm dưới 350k được không"})
+    result = llm_chain.invoke("Thông tin sản phẩm áo sơ mi")
 
     print("Result:", result)
 

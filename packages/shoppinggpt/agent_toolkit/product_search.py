@@ -3,44 +3,41 @@ from langchain_core.runnables import RunnableSequence
 from langchain_groq import ChatGroq
 from langchain_experimental.tools.python.tool import PythonAstREPLTool
 import pandas as pd
-
+from langchain_core.runnables import RunnablePassthrough
 
 PRODUCT_MANAGER_PROMPT = """
-You are an intelligent agent specializing in providing product information and recommendations 
-to customers using a pandas dataframe in Python. Your task is to generate efficient and accurate 
-Python commands to retrieve and analyze product data from the dataframe `df` based on customer queries. 
-Generate only the Python command(s), without any additional explanation or text.
+You are a data scientist specializing in product data analysis using Pandas in Python. 
+Your task is to generate a single Python command to retrieve all information about a specific product
+based on user queries.
 
 The dataframe `df` contains the following columns:
 
-Index(['product_code', 'product_name', 'material', 'size', 'color', 'brand',
-'gender', 'stock_quantity', 'price'], dtype='object')
+- `product_code`: A unique identifier for each product (string)
+- `product_name`: The name of the product (string)
+- `material`: The material composition of the product (string)
+- `size`: The size of the product (string)
+- `color`: The color of the product (string)
+- `brand`: The brand that manufactures or sells the product (string)
+- `gender`: The target gender for the product (e.g., male, female, unisex) (string)
+- `stock_quantity`: The quantity of the product available in stock (integer)
+- `price`: The price of the product, which can be a string or numeric value (string or numeric)
 
-- product_code: string product code
-- product_name: string product name
-- material: string product material
-- size: string product size (S, M, L, XL, etc.)
-- color: string product color
-- brand: string brand name
-- gender: string target customer gender (men/women/unisex)
-- stock_quantity: integer stock quantity
-- price: string or numeric product price (may contain currency symbol)
+Your Python command should:
 
-Your Python command(s) should:
-1. Retrieve all relevant information for the mentioned product(s).
-2. Handle case-insensitive product names and partial matches.
-3. Use appropriate indexing and filtering techniques for efficient data retrieval.
-4. Avoid unnecessary computations or data transformations.
-5. Optimize for performance with large datasets.
-6. Ensure code readability and maintainability.
-7. Validate input to prevent potential errors.
-8. Convert string values to float where necessary, especially for the 'price' column.
-9. Provide recommendations for similar or complementary products if applicable.
-10. Ensure all brackets and parentheses are correctly closed.
+1. Handle product names in a case-insensitive manner and allow for partial matches.
+2. Retrieve all relevant columns of information about the requested product.
+3. Use efficient indexing and filtering techniques to retrieve data.
+4. Convert string values to float for the 'price' column if necessary.
+5. Ensure code readability and maintainability.
+6. Validate input to prevent potential errors.
+
+Output only the Python command. Do not include any explanations, comments, quotation marks, or additional information. Only output the command itself.
 
 Start!
 Question: {input}
 """
+
+
 
 
 
@@ -51,16 +48,21 @@ def create_product_manager_chain(
 ) -> RunnableSequence:
     """Construct a product manager chain from an LLM and dataframe."""
 
-    # Create the prompt template with verbose
-    prompt = PromptTemplate(template=PRODUCT_MANAGER_PROMPT, input_variables=["input"])
-
-    # Initialize the PythonAstREPLTool with the provided dataframe and verbose
+    prompt = PromptTemplate(
+        template=PRODUCT_MANAGER_PROMPT,
+        input_variables=["input"]
+    )   
     python_tool = PythonAstREPLTool(globals={"df": product})
 
     # Construct the chain
     chain = (
-        prompt 
+        {"input": RunnablePassthrough()} 
+        | prompt 
         | llm
+        # | (lambda x: print("Đầu ra LLM : " + x.content))
+        
+        # | (lambda x: print())
+        
         | (lambda x: python_tool.invoke(x.content))
     )
     return chain

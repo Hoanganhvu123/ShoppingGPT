@@ -4,7 +4,7 @@ import os
 
 from langchain_experimental.tools.python.tool import PythonAstREPLTool
 from langchain_groq import ChatGroq
-from shoppinggpt.agent_toolkit.product_search import create_product_manager_chain
+from shoppinggpt.agent_toolkit.product_search import create_products_manager_chain
 
 # Đường dẫn tới file .env
 dotenv_path = 'E:/ShoppingGPT/packages/.env'
@@ -18,9 +18,9 @@ def main():
     path = "E:\\ShoppingGPT\\packages\\shoppinggpt\\data\\products.csv"
     df = pd.read_csv(path)
 
-    llm_chain = create_product_manager_chain(llm, df)
+    llm_chain = create_products_manager_chain(llm, df)
 
-    result = llm_chain.invoke({"input": "tôi muốn mua 1 sản phẩm dưới 350k, có thể đề xuất cho tôi 1 số sản phẩm dưới 350k được không"})
+    result = llm_chain.invoke({"input": "thông tin sản phẩm áo sơ mi trắng"})
 
     print("Result:", result)
 

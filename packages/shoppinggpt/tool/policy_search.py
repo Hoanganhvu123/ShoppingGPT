@@ -34,7 +34,8 @@ class DocumentProcessor:
         vectorstore = FAISS.from_documents(document_chunks, embeddings)
         vectorstore.save_local(self.vectorstore_path)
 
-def retrieve_data(query, top_k=3):
+
+def retrieve_data(query, top_k=5):
     """
     Check if the FAISS vector store exists. If not, process the data and create it.
     Then create a retriever and get top-K results.
@@ -49,7 +50,7 @@ def retrieve_data(query, top_k=3):
     
     vectorstore = FAISS.load_local(
         vectorstore_folder, 
-        GoogleGenerativeAIEmbeddings(model="models/embedding-001"), 
+        GoogleGenerativeAIEmbeddings(model="models/embedding-001", task_type="retrieval_document"), 
         allow_dangerous_deserialization=True
     )
 
@@ -60,16 +61,20 @@ def retrieve_data(query, top_k=3):
     results = retriever.invoke(query)
     return results
 
+def get_tool():
+    tools = [
+        Tool(
+                name="ProductSearch",
+                func=lambda query: retrieve_data(query),
+                description="Useful for when you need to answer questions about products related to shop policies",
+        )   
+    ]
+    return tools
 
-def test_retrieve_data():
-    """
-    Test the retrieve_data function to ensure it works as expected.
-    """
-    query = "chính sách đổi trả hàng"
 
-    results = retrieve_data(query, top_k=3)
-    for result in results:
-        print(result)
+# policy_search_tool = Tool(
+#     name="ProductSearch",
+#     func=lambda query: retrieve_data(query),
+#     description="Useful for when you need to answer questions about products related to shop policies",
+# )
 
-if __name__ == "__main__":
-    test_retrieve_data()

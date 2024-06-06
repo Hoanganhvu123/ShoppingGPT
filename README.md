@@ -1,83 +1,69 @@
-# ShoppingGPT
-<<<<<<< HEAD
-ShoppingGPT - AI agent for shopping 
-=======
+# ShoppingGPT 🛒🤖
 
-## Installation
+ShoppingGPT is an intelligent shopping assistant designed to help users query product data stored in a CSV file. This project leverages the power of Python, Pandas, and an advanced LLM (Language Learning Model) to provide detailed information about various products.
 
-Install the LangChain CLI if you haven't yet
+## Features ✨
 
-```bash
-pip install -U langchain-cli
-```
+- 🔍 **Product Information Retrieval:** Retrieve detailed information about products based on user queries.
+- 🔤 **Case-Insensitive Search:** Handle product names in a case-insensitive manner and allow for partial matches.
+- ⚡ **Efficient Data Processing:** Utilize efficient indexing and filtering techniques to process data.
+- 🔄 **Data Conversion:** Convert string values to float for the 'price' column if necessary.
+- 🛡️ **Error Handling:** Validate input to prevent potential errors.
 
-## Adding packages
+## Data Structure 🗂️
 
-```bash
-# adding packages from 
-# https://github.com/langchain-ai/langchain/tree/master/templates
-langchain app add $PROJECT_NAME
+The product data is stored in a CSV file and loaded into a Pandas DataFrame with the following columns:
 
-# adding custom GitHub repo packages
-langchain app add --repo $OWNER/$REPO
-# or with whole git string (supports other git providers):
-# langchain app add git+https://github.com/hwchase17/chain-of-verification
+- `product_code`: A unique identifier for each product (string)
+- `product_name`: The name of the product (string)
+- `material`: The material composition of the product (string)
+- `size`: The size of the product (string)
+- `color`: The color of the product (string)
+- `brand`: The brand that manufactures or sells the product (string)
+- `gender`: The target gender for the product (e.g., male, female, unisex) (string)
+- `stock_quantity`: The quantity of the product available in stock (integer)
+- `price`: The price of the product, which can be a string or numeric value (string or numeric)
 
-# with a custom api mount point (defaults to `/{package_name}`)
-langchain app add $PROJECT_NAME --api_path=/my/custom/path/rag
-```
+## Installation 🛠️
 
-Note: you remove packages by their api path
+To use ShoppingGPT, follow these steps:
 
-```bash
-langchain app remove my/custom/path/rag
-```
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/Hoanganhvu123/ShoppingGPT.git
+    cd ShoppingGPT
+    ```
 
-## Setup LangSmith (Optional)
-LangSmith will help us trace, monitor and debug LangChain applications. 
-LangSmith is currently in private beta, you can sign up [here](https://smith.langchain.com/). 
-If you don't have access, you can skip this section
+2. Create and activate a virtual environment:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    ```
 
+3. Install the required dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-```shell
-export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-export LANGCHAIN_PROJECT=<your-project>  # if not specified, defaults to "default"
-```
+## Usage 🚀
 
-## Launch LangServe
+To start using ShoppingGPT, you need to have your product data in a CSV file. Here is an example of how to run the script:
 
-```bash
-langchain serve
-```
+```python
+import pandas as pd
+from your_module import create_product_manager_chain, ChatGroq
 
-## Running in Docker
+# Load your product data
+df = pd.read_csv('path/to/your/product_data.csv')
 
-This project folder includes a Dockerfile that allows you to easily build and host your LangServe app.
+# Initialize the LLM
+llm = ChatGroq(...)
 
-### Building the Image
+# Create the product manager chain
+chain = create_product_manager_chain(llm, df)
 
-To build the image, you simply:
+# Example query
+query = "Find details about a specific product"
+result = chain.invoke({"input": query})
+print(result)
 
-```shell
-docker build . -t my-langserve-app
-```
-
-If you tag your image with something other than `my-langserve-app`,
-note it for use in the next step.
-
-### Running the Image Locally
-
-To run the image, you'll need to include any environment variables
-necessary for your application.
-
-In the below example, we inject the `OPENAI_API_KEY` environment
-variable with the value set in my local environment
-(`$OPENAI_API_KEY`)
-
-We also expose port 8080 with the `-p 8080:8080` option.
-
-```shell
-docker run -e OPENAI_API_KEY=$OPENAI_API_KEY -p 8080:8080 my-langserve-app
-```
->>>>>>> a3f4b02 (Initial commit)

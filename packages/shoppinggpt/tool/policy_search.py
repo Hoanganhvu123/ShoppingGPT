@@ -45,8 +45,6 @@ class DocumentProcessor:
 class PolicySearchInput(BaseModel): 
     query: str = Field(description="Search policy documents and return relevant information.")
 
-
-
 class PolicySearchTool(StructuredTool):
     name: str = "policy_search"
     args_schema: Type[BaseModel] = PolicySearchInput

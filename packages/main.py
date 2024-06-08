@@ -17,7 +17,7 @@ os.environ['GOOGLE_API_KEY'] = os.getenv('GOOGLE_API_KEY')
 
 
 def main():
-    llm = ChatGroq(temperature=0, model="llama3-70b-8192")
+    llm = ChatGroq(temperature=0.5, model="llama3-70b-8192")
     
     lead = ShoppingGPT(
         llm = llm,

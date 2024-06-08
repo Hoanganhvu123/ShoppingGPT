@@ -31,7 +31,6 @@ os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_SMITH_API_KEY")
 os.environ['GOOGLE_API_KEY'] = os.getenv('GOOGLE_API_KEY')
 
 
-
 class ShoppingGPT:
     def __init__(self, llm, verbose=False, **kwargs):
         self.llm = llm
@@ -39,29 +38,28 @@ class ShoppingGPT:
 
         self.memory = ConversationBufferWindowMemory()
         self.human_chat_memory = []
+        self.human_input = ""
         
 
     def human_step(self) -> str:
         self.human_input = input("User: ")
-        print(self.human_input)
         self.memory.chat_memory.add_user_message(self.human_input)
  
  
     def agent_step(self):
         tools = [ProductSearchTool(), PolicySearchTool()]
         inputs = {
-            "chat_history": self.memory.chat_memory,
+            "chat_history": self.memory.chat_memory.messages,
             "input": self.human_input,
         }
-        agent = create_tool_calling_agent(self.llm, tools ,shopping_assistant_prompt)
+        prompt = hub.pull("hwchase17/openai-tools-agent")
+        agent = create_tool_calling_agent(self.llm, tools ,prompt)
         
         agent_executor = AgentExecutor(
             agent=agent, 
             tools=tools , 
             verbose = True,
             handle_parsing_errors=True,
-            return_intermediate_steps=True,
-            # max_iterations: 5, 
         )
         
         ai_message = agent_executor.invoke(inputs)

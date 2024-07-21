@@ -1,69 +1,65 @@
-# ShoppingGPT 🛒🤖
+ShoppingGPT 🛒🤖
+ShoppingGPT là một trợ lý mua sắm thông minh được thiết kế để giúp người dùng truy vấn dữ liệu sản phẩm được lưu trữ trong tệp CSV. Dự án này tận dụng sức mạnh của Python, Pandas và một mô hình ngôn ngữ tiên tiến (LLM) để cung cấp thông tin chi tiết về các sản phẩm khác nhau.
 
-ShoppingGPT is an intelligent shopping assistant designed to help users query product data stored in a CSV file. This project leverages the power of Python, Pandas, and an advanced LLM (Language Learning Model) to provide detailed information about various products.
+Tính Năng ✨
+🔍 Product Information Retrieval: Truy xuất thông tin chi tiết về sản phẩm dựa trên truy vấn của người dùng.
+🔤 Case-Insensitive Search: Xử lý tên sản phẩm không phân biệt chữ hoa chữ thường và cho phép khớp một phần.
+⚡ Efficient Data Processing: Sử dụng các kỹ thuật lập chỉ mục và lọc hiệu quả để xử lý dữ liệu.
+🔄 Data Conversion: Chuyển đổi các giá trị chuỗi thành số thực cho cột 'price' nếu cần thiết.
+🛡️ Error Handling: Xác thực đầu vào để ngăn ngừa các lỗi tiềm ẩn.
+Cấu Trúc Dữ Liệu 🗂️
+Dữ liệu sản phẩm được lưu trữ trong tệp CSV và được tải vào một DataFrame của Pandas với các cột sau:
 
-## Features ✨
+product_code: Một mã định danh duy nhất cho mỗi sản phẩm (chuỗi)
+product_name: Tên của sản phẩm (chuỗi)
+material: Thành phần vật liệu của sản phẩm (chuỗi)
+size: Kích thước của sản phẩm (chuỗi)
+color: Màu sắc của sản phẩm (chuỗi)
+brand: Thương hiệu sản xuất hoặc bán sản phẩm (chuỗi)
+gender: Giới tính mục tiêu của sản phẩm (ví dụ: nam, nữ, unisex) (chuỗi)
+stock_quantity: Số lượng sản phẩm có sẵn trong kho (số nguyên)
+price: Giá của sản phẩm, có thể là chuỗi hoặc giá trị số (chuỗi hoặc số)
+Cài Đặt 🛠️
+Để sử dụng ShoppingGPT, hãy thực hiện các bước sau:
 
-- 🔍 **Product Information Retrieval:** Retrieve detailed information about products based on user queries.
-- 🔤 **Case-Insensitive Search:** Handle product names in a case-insensitive manner and allow for partial matches.
-- ⚡ **Efficient Data Processing:** Utilize efficient indexing and filtering techniques to process data.
-- 🔄 **Data Conversion:** Convert string values to float for the 'price' column if necessary.
-- 🛡️ **Error Handling:** Validate input to prevent potential errors.
+Clone repository:
 
-## Data Structure 🗂️
+bash
+Copy code
+git clone https://github.com/Hoanganhvu123/ShoppingGPT.git
+cd ShoppingGPT
+Tạo và kích hoạt môi trường ảo:
 
-The product data is stored in a CSV file and loaded into a Pandas DataFrame with the following columns:
+bash
+Copy code
+python -m venv venv
+source venv/bin/activate  # Trên Windows, sử dụng `venv\Scripts\activate`
+Cài đặt các thư viện cần thiết:
 
-- `product_code`: A unique identifier for each product (string)
-- `product_name`: The name of the product (string)
-- `material`: The material composition of the product (string)
-- `size`: The size of the product (string)
-- `color`: The color of the product (string)
-- `brand`: The brand that manufactures or sells the product (string)
-- `gender`: The target gender for the product (e.g., male, female, unisex) (string)
-- `stock_quantity`: The quantity of the product available in stock (integer)
-- `price`: The price of the product, which can be a string or numeric value (string or numeric)
+bash
+Copy code
+pip install -r requirements.txt
+Sử Dụng 🖥️
+Chạy Backend
+Điều hướng đến thư mục backend/app:
 
-## Installation 🛠️
+bash
+Copy code
+cd backend/app
+Chạy ứng dụng FastAPI với Uvicorn:
 
-To use ShoppingGPT, follow these steps:
+bash
+Copy code
+uvicorn main:app --reload
+Chạy Frontend
+Điều hướng đến thư mục frontend:
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/Hoanganhvu123/ShoppingGPT.git
-    cd ShoppingGPT
-    ```
+bash
+Copy code
+cd frontend
+Chạy ứng dụng React:
 
-2. Create and activate a virtual environment:
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
-
-3. Install the required dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-## Usage 🚀
-
-To start using ShoppingGPT, you need to have your product data in a CSV file. Here is an example of how to run the script:
-
-```python
-import pandas as pd
-from your_module import create_product_manager_chain, ChatGroq
-
-# Load your product data
-df = pd.read_csv('path/to/your/product_data.csv')
-
-# Initialize the LLM
-llm = ChatGroq(...)
-
-# Create the product manager chain
-chain = create_product_manager_chain(llm, df)
-
-# Example query
-query = "Find details about a specific product"
-result = chain.invoke({"input": query})
-print(result)
-
+bash
+Copy code
+npm install
+npm run dev

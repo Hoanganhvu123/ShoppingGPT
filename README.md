@@ -1,18 +1,20 @@
-# ShoppingGPT 🛒🤖
+# ShoppingGPT 🛍️🤖
 
-ShoppingGPT is an intelligent shopping assistant designed to help users query product data stored in a CSV file. This project leverages the power of Python, Pandas, and an advanced Language Learning Model (LLM) to provide detailed information about various products.
+ShoppingGPT is an advanced AI-powered shopping assistant that combines cutting-edge natural language processing techniques to provide a seamless and intelligent shopping experience for Vietnamese customers.
 
 ## Features ✨
 
-- 🔍 **Product Information Retrieval**: Retrieve detailed information about products based on user queries.
-- 🔤 **Case-Insensitive Search**: Handle product names in a case-insensitive manner and allow for partial matches.
-- ⚡ **Efficient Data Processing**: Utilize efficient indexing and filtering techniques to process data.
-- 🔄 **Data Conversion**: Convert string values to float for the 'price' column if necessary.
-- 🛡️ **Error Handling**: Validate input to prevent potential errors.
+- 🧠 **Large Language Models (LLMs)**: Utilize state-of-the-art language models for natural conversations.
+- 📚 **RAG (Retrieval Augmented Generation)**: Enhance responses with relevant product information from the database.
+- 🛣️ **Semantic Router**: Intelligently direct queries to appropriate handling mechanisms.
+- 🪞 **Reflection Module**: Improve response quality through context analysis and conversation history.
+- 🇻🇳 **Vietnamese Language Support**: Tailored for the Vietnamese market and language.
+- 🔍 **Advanced Product Search**: Case-insensitive and partial match product search capabilities.
+- 💬 **Intelligent Chatbot Interface**: User-friendly chat interface for easy product queries and recommendations.
 
 ## Data Structure 🗂️
 
-The product data is stored in a CSV file and loaded into a Pandas DataFrame with the following columns:
+The product data is stored in MongoDB and includes the following fields:
 
 - `product_code`: A unique identifier for each product (string)
 - `product_name`: The name of the product (string)
@@ -22,7 +24,8 @@ The product data is stored in a CSV file and loaded into a Pandas DataFrame with
 - `brand`: The brand that manufactures or sells the product (string)
 - `gender`: The target gender for the product (e.g., male, female, unisex) (string)
 - `stock_quantity`: The quantity of the product available in stock (integer)
-- `price`: The price of the product, which can be a string or numeric value (string or numeric)
+- `price`: The price of the product (numeric)
+- `embedding`: Vector representation of the product for semantic search (array of floats)
 
 ## Installation 🛠️
 
@@ -30,7 +33,7 @@ To use ShoppingGPT, follow these steps:
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/Hoanganhvu123/ShoppingGPT.git
+    git clone https://github.com/yourusername/ShoppingGPT.git
     cd ShoppingGPT
     ```
 
@@ -45,102 +48,65 @@ To use ShoppingGPT, follow these steps:
     pip install -r requirements.txt
     ```
 
+4. **Set up environment variables**:
+   Create a `.env` file in the root directory and add your API keys:
+   ```
+   GOOGLE_API_KEY=your_google_api_key
+   ```
+
 ## Usage 🖥️
 
-### Running the Backend
+To start the ShoppingGPT assistant:
 
-1. Navigate to the `backend/app` directory:
-    ```bash
-    cd backend/app
-    ```
-
-2. Run the FastAPI application with Uvicorn:
-    ```bash
-    uvicorn main:app --reload
-    ```
-
-### Running the Frontend
-
-1. Navigate to the `frontend` directory:
-    ```bash
-    cd frontend
-    ```
-
-2. Run the React application:
-    ```bash
-    npm install
-    npm run dev
-    ```
-
-## Screenshots 🌟
-
-### Website with Integrated Chatbot
-
-Your website will look like this with the Chatbot integrated in the bottom right corner:
-
-![image](https://github.com/user-attachments/assets/8337a3c3-9bec-405b-aff6-64af5d6a346f)
-
-![image](https://github.com/user-attachments/assets/fe601030-a688-4f44-a642-683324c9624e)
-
-![image](https://github.com/user-attachments/assets/d0a1b9ae-28f5-4048-be73-00e9709da769)
-
-
-### Chatbot Interface
-
-The Chatbot helps users query product information easily and intuitively:
-
-![image](https://github.com/user-attachments/assets/0b100e4e-697f-46a5-9b60-c723925418c6)
-
+```bash
+python main.py
+```
 
 ## Technical Details 🔧
 
-### Backend
+### Backend Architecture
 
-The backend of ShoppingGPT is built with FastAPI, a modern and fast web framework for building APIs with Python 3.7+.
+ShoppingGPT uses a modular architecture:
 
-#### Backend Directory Structure
+1. **User Input** ➡️ **Semantic Router** 
+2. **Semantic Router** ➡️ **RAG System** or **LLM** or **Human Support**
+3. **RAG System** ➡️ **Response Generation**
 
-- **`app/`**: Contains the main source code for the FastAPI application.
-  - **`main.py`**: The main entry point of the application, initializing and running FastAPI.
-  - **`api/`**: Contains the API routers and endpoints.
-    - **`chatbot/`**: Contains source code related to chatbot functionality.
-  - **`core/`**: Contains configuration and settings for the application.
-  - **`services/`**: Contains services and main processing logic for the application.
-  - **`utils/`**: Contains utilities and helper functions.
+#### Key Components
 
-### Frontend
+- **Semantic Router**: Uses embeddings to classify user queries and direct them to the appropriate handling mechanism.
+- **RAG System**: Retrieves relevant product information from MongoDB to enhance the AI's responses.
+- **LLM Integration**: Utilizes Google's Gemini model for generating human-like responses in Vietnamese.
 
-The frontend of ShoppingGPT is built with React, a popular JavaScript library for building user interfaces.
+### Directory Structure
 
-#### Frontend Directory Structure
-
-- **`src/`**: Contains the main source code for the React application.
-  - **`Components/Chatbot/Chatbot.js`**: The main component for the Chatbot.
-  - **`index.js`**: The main entry point of the React application.
+- **`shoppinggpt/`**: Main package directory
+  - **`router/`**: Contains the Semantic Router implementation
+  - **`rag/`**: Implements the Retrieval Augmented Generation system
+  - **`reflection/`**: Contains the Reflection module
+  - **`embeddings/`**: Handles creation and management of embeddings
+  - **`prompts/`**: Stores prompt templates for the LLM
+  - **`utils/`**: Contains utility functions and helpers
 
 ## Feedback and Contributions 🌟
 
-If you have any feedback or contributions, please open an issue or pull request on the [GitHub repository](https://github.com/Hoanganhvu123/ShoppingGPT).
+We welcome contributions! If you have any ideas, just open an issue and tell us what you think.
+
+If you'd like to contribute, please fork the repository and make changes as you'd like. Pull requests are warmly welcome.
 
 ## License 📄
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Author 👨‍💻
+## Authors 👨‍💻
 
-ShoppingGPT is developed by [Hoanganhvu123](https://github.com/Hoanganhvu123). If you have any questions, feel free to contact me via email or open an issue on GitHub.
+ShoppingGPT is developed by [Your Name/Team]. If you have any questions, feel free to contact us or open an issue on GitHub.
 
-## Contact 📬
+## Acknowledgements 🙏
 
-If you have any questions or need support, please contact me at:
+- OpenAI for GPT models
+- Google for Gemini models
+- MongoDB for vector search capabilities
+- LangChain for providing excellent tools for building LLM applications
 
-- Email: hoanganhvu123@example.com
-- GitHub: [Hoanganhvu123](https://github.com/Hoanganhvu123)
-- LinkedIn: [Hoanganh Vu](https://www.linkedin.com/in/hoanganhvu)
-
-## Conclusion 🏁
-
-ShoppingGPT is an exciting project with the potential to develop intelligent features for online shopping. Combining Python, Pandas, FastAPI, and React, this project provides a powerful and flexible platform to build smart shopping applications.
-
-Thank you for using ShoppingGPT! I hope you have a great shopping experience and success with your projects!
-
+Thank you for using ShoppingGPT! We hope it enhances your e-commerce experience with AI-powered assistance. Happy shopping! 🛒✨

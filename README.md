@@ -1,6 +1,6 @@
-# ShoppingGPT 🛍️🤖
+<h1 align="center">ShoppingGPT🌼</h1>
 
-![ShoppingGPT Logo](public/shoppinggpt_logo.png)
+<img src="public/shoppinggpt_logo.png" alt="ShoppingGPT Logo" width="200" height="auto">
 
 ShoppingGPT is an AI-powered intelligent shopping assistant that combines advanced natural language processing techniques to deliver a smart and seamless shopping experience. Built with a focus on performance, scalability, and user experience, ShoppingGPT integrates cutting-edge technologies to revolutionize e-commerce interactions.
 
@@ -121,11 +121,14 @@ To start ShoppingGPT:
 ![ShoppingGPT Interface](public/interface.png)
 *Our user-friendly chat interface*
 
+
 ![Product Search Demo](public/product_search.png)
 *Example of product search results*
 
+
 ![Chitchat Example](public/chitchat_example.png)
 *Friendly conversation with our AI assistant*
+
 
 These images showcase the key aspects of our ShoppingGPT project. From the intuitive chat interface to the powerful product search and easy access to policy information, our AI assistant is designed to enhance your shopping experience! 🛍️🤖
 

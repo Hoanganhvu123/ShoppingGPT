@@ -1,5 +1,6 @@
-import os
+from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
+import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.memory import ConversationBufferMemory
 from shoppinggpt.router.semantic_router import (
@@ -25,6 +26,7 @@ SHARED_MEMORY = ConversationBufferMemory(return_messages=True)
 # Initialize SemanticRouter
 SEMANTIC_ROUTER = SemanticRouter()
 
+app = Flask(__name__)
 
 def handle_query(query: str) -> dict:
     """Handle user query and return response."""
@@ -35,7 +37,7 @@ def handle_query(query: str) -> dict:
         response = chitchat_chain.invoke({"input": query})
     elif guided_route == PRODUCT_ROUTE_NAME:
         agent = ShoppingAgent(LLM, SHARED_MEMORY)
-        response = agent.invoke(query)  # Pass query directly, not as a dict
+        response = agent.invoke(query)
     else:
         response = "Unknown query type"
     
@@ -55,23 +57,17 @@ def handle_query(query: str) -> dict:
         'type': guided_route
     }
 
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-def main():
-    """Main function to run the chat loop."""
-    print("Welcome to the AI chat! Type 'exit' to end the conversation.")
-    
-    while True:
-        user_input = input("\nYou: ")
-        
-        if user_input.lower() == 'exit':
-            print("Ending conversation. Goodbye!")
-            break
-        
-        try:
-            result = handle_query(user_input)
-            print(f"AI ({result['type']}): {result['response']}")
-        except Exception as e:
-            print(f"An error occurred: {str(e)}")
+@app.route('/get', methods=['GET'])
+def get_bot_response():
+    user_message = request.args.get('msg')
+    response = handle_query(user_message)
+    print(f"User message: {user_message}")
+    print(f"Bot response: {response}")
+    return jsonify(response)
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,9 +1,4 @@
-import os
-from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_groq import ChatGroq
 from langchain.agents import AgentExecutor, create_tool_calling_agent
-
 from langchain.memory import ConversationBufferMemory
 from shoppinggpt.tool.product_search import product_search_tool
 from shoppinggpt.tool.policy_search import policy_search_tool
@@ -20,10 +15,7 @@ class ShoppingAgent:
             ("system", """You are an intelligent and helpful AI assistant for an online fashion store.
             Your task is to answer customer questions about products and store policies.
             Use the available tools to search for accurate information and provide appropriate answers.
-            
-            Tools you can use:
-            {tools}
-            
+                      
             Always use Vietnamese to communicate with customers."""),
             ("human", "{input}"),
             ("ai", "{agent_scratchpad}")
@@ -32,7 +24,6 @@ class ShoppingAgent:
     def invoke(self, query: str) -> str:
         inputs = {
             "input": query,
-            "tools": "\n".join([f"- {tool.name}: {tool.description}" for tool in self.tools])
         }
         agent = create_tool_calling_agent(self.llm, self.tools, self.prompt)
 
@@ -46,5 +37,3 @@ class ShoppingAgent:
         ai_message = agent_executor.invoke(inputs)
         agent_output = ai_message['output']
         return agent_output
-    
-

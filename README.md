@@ -1,35 +1,75 @@
 # ShoppingGPT 🛍️🤖
 
-ShoppingGPT is an advanced AI-powered shopping assistant that combines cutting-edge natural language processing techniques to provide a seamless and intelligent shopping experience for Vietnamese customers.
+![ShoppingGPT Logo](public/shoppinggpt_logo.png)
+
+ShoppingGPT is an AI-powered intelligent shopping assistant that combines advanced natural language processing techniques to deliver a smart and seamless shopping experience. Built with a focus on performance, scalability, and user experience, ShoppingGPT integrates cutting-edge technologies to revolutionize e-commerce interactions.
 
 ## Features ✨
 
-- 🧠 **Large Language Models (LLMs)**: Utilize state-of-the-art language models for natural conversations.
-- 📚 **RAG (Retrieval Augmented Generation)**: Enhance responses with relevant product information from the database.
-- 🛣️ **Semantic Router**: Intelligently direct queries to appropriate handling mechanisms.
-- 🪞 **Reflection Module**: Improve response quality through context analysis and conversation history.
-- 🇻🇳 **Vietnamese Language Support**: Tailored for the Vietnamese market and language.
-- 🔍 **Advanced Product Search**: Case-insensitive and partial match product search capabilities.
-- 💬 **Intelligent Chatbot Interface**: User-friendly chat interface for easy product queries and recommendations.
+- 🧠 **Large Language Models (LLMs)**: Leverages the power of Google's Gemini model for natural, context-aware conversations.
+- 📚 **RAG (Retrieval-Augmented Generation)**: Enhances responses with relevant product information from SQLite database, ensuring accurate and up-to-date product details.
+- 🛣️ **Semantic Router**: Intelligently routes queries to the appropriate handling mechanism using advanced embedding techniques.
+- 🔍 **Advanced Product Search**: Utilizes case-insensitive and partial matching capabilities, powered by efficient SQLite queries and indexing.
+- 💬 **Intelligent Chatbot Interface**: User-friendly chat interface designed for intuitive product queries and personalized recommendations.
+
+
+## System Architecture
+
+ShoppingGPT employs a modular, scalable architecture:
+
+1. **User Interface (Flask Web App)**
+   - Handles user input and displays responses
+
+2. **Semantic Router**
+   - Utilizes GoogleGenerativeAIEmbeddings
+   - Classifies and routes user queries to appropriate handlers
+
+3. **Query Handlers**
+   a. **Chitchat Chain**
+      - Manages general conversation
+      - Leverages LLM (Gemini-1.5-flash) and ConversationBufferMemory
+   
+   b. **Shopping Agent**
+      - Processes product-related queries
+      - Employs various tools:
+        - Product Search Tool (SQLite-based)
+        - Policy Search Tool (FAISS-based)
+
+4. **Data Storage**
+   - SQLite database for product information
+   - FAISS vector store for policy information
+
+5. **External Services**
+   - Google Generative AI API for LLM and embeddings
+
+This architecture enables efficient query routing, context-aware responses, and seamless integration of product and policy information into the conversation flow.
+
+
+### Key Components
+
+- **Semantic Router**: Uses `GoogleGenerativeAIEmbeddings` to efficiently classify and route user queries.
+- **RAG System**: Combines FAISS vector store for policy information and SQLite for product data, ensuring fast and relevant information retrieval.
+- **LLM Integration**: Utilizes `ChatGoogleGenerativeAI` with the Gemini-1.5-flash model to generate human-like responses.
+- **Product Search**: Implements a robust `ProductDataLoader` class for efficient SQLite query execution and result formatting.
+- **Policy Search**: Uses FAISS for fast similarity search on company policies and guidelines.
 
 ## Data Structure 🗂️
 
-The product data is stored in MongoDB and includes the following fields:
+Product data is stored in SQLite and includes the following fields:
 
-- `product_code`: A unique identifier for each product (string)
-- `product_name`: The name of the product (string)
-- `material`: The material composition of the product (string)
-- `size`: The size of the product (string)
-- `color`: The color of the product (string)
-- `brand`: The brand that manufactures or sells the product (string)
-- `gender`: The target gender for the product (e.g., male, female, unisex) (string)
-- `stock_quantity`: The quantity of the product available in stock (integer)
-- `price`: The price of the product (numeric)
-- `embedding`: Vector representation of the product for semantic search (array of floats)
+- `product_code`: Unique identifier (TEXT)
+- `product_name`: Name of the product (TEXT)
+- `material`: Material composition (TEXT)
+- `size`: Available sizes (TEXT)
+- `color`: Available colors (TEXT)
+- `brand`: Manufacturer or seller (TEXT)
+- `gender`: Target gender (TEXT)
+- `stock_quantity`: Quantity in stock (INTEGER)
+- `price`: Product price (REAL)
 
 ## Installation 🛠️
 
-To use ShoppingGPT, follow these steps:
+To set up ShoppingGPT:
 
 1. **Clone the repository**:
     ```bash
@@ -43,70 +83,92 @@ To use ShoppingGPT, follow these steps:
     source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
     ```
 
-3. **Install the required dependencies**:
+3. **Install dependencies**:
     ```bash
     pip install -r requirements.txt
     ```
 
-4. **Set up environment variables**:
-   Create a `.env` file in the root directory and add your API keys:
+4. **Configure environment**:
+   Create a `.env` file in the root directory:
    ```
    GOOGLE_API_KEY=your_google_api_key
    ```
 
+5. **Initialize the database**:
+    ```bash
+    python scripts/init_db.py
+    ```
+
 ## Usage 🖥️
 
-To start the ShoppingGPT assistant:
+To start ShoppingGPT:
 
-```bash
-python main.py
-```
+1. **Run the Flask application**:
+   ```bash
+   python app.py
+   ```
 
-## Technical Details 🔧
+2. **Access the chatbot**:
+   Open your web browser and navigate to `http://localhost:5000`.
 
-### Backend Architecture
+3. **Interact with ShoppingGPT**:
+   - Ask about products: "What red shirts do you have in stock?"
+   - Inquire about policies: "What's your return policy?"
+   - General chat: "How's the weather today?"
 
-ShoppingGPT uses a modular architecture:
+## Project Showcase 📸
 
-1. **User Input** ➡️ **Semantic Router** 
-2. **Semantic Router** ➡️ **RAG System** or **LLM** or **Human Support**
-3. **RAG System** ➡️ **Response Generation**
+![ShoppingGPT Interface](public/interface.png)
+*Our user-friendly chat interface*
 
-#### Key Components
+![Product Search Demo](public/product_search.png)
+*Example of product search results*
 
-- **Semantic Router**: Uses embeddings to classify user queries and direct them to the appropriate handling mechanism.
-- **RAG System**: Retrieves relevant product information from MongoDB to enhance the AI's responses.
-- **LLM Integration**: Utilizes Google's Gemini model for generating human-like responses in Vietnamese.
+![Chitchat Example](public/chitchat_example.png)
+*Friendly conversation with our AI assistant*
 
-### Directory Structure
+These images showcase the key aspects of our ShoppingGPT project. From the intuitive chat interface to the powerful product search and easy access to policy information, our AI assistant is designed to enhance your shopping experience! 🛍️🤖
 
-- **`shoppinggpt/`**: Main package directory
-  - **`router/`**: Contains the Semantic Router implementation
-  - **`rag/`**: Implements the Retrieval Augmented Generation system
-  - **`reflection/`**: Contains the Reflection module
-  - **`embeddings/`**: Handles creation and management of embeddings
-  - **`prompts/`**: Stores prompt templates for the LLM
-  - **`utils/`**: Contains utility functions and helpers
+## Customization 🛠️
 
-## Feedback and Contributions 🌟
+To customize ShoppingGPT for your specific needs:
 
-We welcome contributions! If you have any ideas, just open an issue and tell us what you think.
+1. **Update product database**: Modify `data/products.db` with your inventory.
+2. **Adjust policies**: Edit `data/policy.txt` with your company's guidelines.
+3. **Fine-tune responses**: Modify prompt templates in `shoppinggpt/tool/product_search.py` and `shoppinggpt/tool/policy_search.py`.
 
-If you'd like to contribute, please fork the repository and make changes as you'd like. Pull requests are warmly welcome.
+## Troubleshooting 🔍
+
+If you encounter any issues:
+
+1. Ensure all environment variables are correctly set.
+2. Check the console for any error messages.
+3. Verify that the database and policy files are in the correct locations.
+4. Make sure all required dependencies are installed correctly.
+5. Confirm that you're using a compatible Python version (3.7+).
+
+For more detailed information, please refer to the documentation or open an issue on the GitHub repository.
+
+## Contributing 🤝
+
+We welcome contributions to ShoppingGPT! Here's how you can help:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/AmazingFeature`)
+3. Make your changes
+4. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the branch (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request
+
+Please make sure to update tests as appropriate and adhere to the project's coding standards.
 
 ## License 📄
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Authors 👨‍💻
+## Acknowledgments 👏
 
-ShoppingGPT is developed by [Your Name/Team]. If you have any questions, feel free to contact us or open an issue on GitHub.
+- Thanks to all contributors who have helped shape ShoppingGPT
+- Special thanks to the open-source community for providing amazing tools and libraries
 
-## Acknowledgements 🙏
-
-- OpenAI for GPT models
-- Google for Gemini models
-- MongoDB for vector search capabilities
-- LangChain for providing excellent tools for building LLM applications
-
-Thank you for using ShoppingGPT! We hope it enhances your e-commerce experience with AI-powered assistance. Happy shopping! 🛒✨
+Happy shopping with ShoppingGPT! 🛍️🤖

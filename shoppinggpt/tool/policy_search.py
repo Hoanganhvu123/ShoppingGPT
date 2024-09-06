@@ -1,23 +1,11 @@
 import os
-from dotenv import load_dotenv
 from typing import List
 
-from langchain import hub
-from langchain.tools import StructuredTool, tool
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain.tools import tool
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-
-# Set up environment
-load_dotenv(r"E:\chatbot\ShoppingGPT\.env")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
-
-# Initialize embeddings
-EMBEDDINGS = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+from config import EMBEDDINGS, DATA_TEXT_PATH, STORE_DIRECTORY
 
 class VectorStoreManager:
     def __init__(self, data_path: str, store_directory: str, embeddings):
@@ -59,36 +47,23 @@ class VectorStoreManager:
     def create(data_path: str, store_directory: str, embeddings):
         return VectorStoreManager(data_path, store_directory, embeddings)
 
+
 @tool
-def policy_search_tool(query: str) -> str:
+def policy_search_tool(query: str) -> List[str]:
     """
-    Search for information related to company policies, shipping policies,
-    return policies, warranty, and customer data privacy.
+    Search for information related to company policies.
 
     Args:
         query (str): The search query to find information.
 
     Returns:
-        str: The search results as a text string.
+        List[str]: The search results as a list of text strings.
     """
-    data_path = r"E:\chatbot\ShoppingGPT\data\policy.txt"
-    store_directory = r"E:\chatbot\ShoppingGPT\data\datastore"
     vector_store_manager = VectorStoreManager.create(
-        data_path,
-        store_directory,
+        DATA_TEXT_PATH,
+        STORE_DIRECTORY,
         EMBEDDINGS
     )
 
     results = vector_store_manager.vectorstore.similarity_search(query, k=5)
-
-    return results
-
-
-
-# def main():
-#     query = "chính sách đổi trả hàng"
-#     result = search_vectorstore(query) 
-#     print(result)
-
-# if __name__ == "__main__":
-#     main()
+    return [doc.page_content for doc in results]

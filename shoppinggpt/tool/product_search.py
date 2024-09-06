@@ -1,20 +1,12 @@
-import os
 import sqlite3
-from dotenv import load_dotenv
-from pydantic import BaseModel, Field
 from typing import Union, List, Dict
 
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_groq import ChatGroq
 
-
-load_dotenv(r"E:\chatbot\ShoppingGPT\.env")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
+from config import GOOGLE_API_KEY, DATA_PRODUCT_PATH
 
 PRODUCT_RECOMMENDATION_PROMPT = """
     You are a chatbot assistant specializing in providing product information and
@@ -53,6 +45,13 @@ class ProductDataLoader:
         self.db_path = db_path
         self.conn = None
 
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
     def connect(self):
         self.conn = sqlite3.connect(self.db_path)
 
@@ -60,8 +59,8 @@ class ProductDataLoader:
         if self.conn:
             self.conn.close()
 
-    def clean_sql_query(self, query: str) -> str:
-        # Loại bỏ các ký tự backtick và từ khóa 'sql'
+    @staticmethod
+    def clean_sql_query(query: str) -> str:
         return query.replace('```sql', '').replace('```', '').strip()
 
     def execute_query(self, query: str, params: tuple = ()) -> List[Dict]:
@@ -72,8 +71,7 @@ class ProductDataLoader:
         cursor.execute(cleaned_query, params)
         columns = [col[0] for col in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
-    
-    
+
 @tool
 def product_search_tool(input: str) -> Union[List[Dict], str]:
     """
@@ -86,38 +84,25 @@ def product_search_tool(input: str) -> Union[List[Dict], str]:
         Union[List[Dict], str]: Kết quả tìm kiếm dưới dạng danh sách từ điển hoặc thông báo lỗi nếu có.
     """
     try:
-        llm = ChatGoogleGenerativeAI(temperature=0, model="gemini-1.5-flash")
+        llm = ChatGoogleGenerativeAI(temperature=0, model="gemini-1.5-flash", google_api_key=GOOGLE_API_KEY)
         prompt = PromptTemplate(
             template=PRODUCT_RECOMMENDATION_PROMPT,
             input_variables=["input"]
         )
-        product_data_loader = ProductDataLoader("E:\\chatbot\\ShoppingGPT\\data\\products.db")
         
-        def execute_sql_query(query: str) -> List[Dict]:
-            return product_data_loader.execute_query(query)
+        with ProductDataLoader(f"{DATA_PRODUCT_PATH}") as product_data_loader:
+            def execute_sql_query(query: str) -> List[Dict]:
+                return product_data_loader.execute_query(query)
+            
+            chain = (
+                {"input": RunnablePassthrough()}
+                | prompt
+                | llm
+                | (lambda x: execute_sql_query(x.content))
+            )
+            result = chain.invoke(input)
         
-        # Construct the chain
-        chain = (
-            {"input": RunnablePassthrough()}
-            | prompt
-            | llm
-            # | (lambda x: x.content)
-            | (lambda x: execute_sql_query(x.content))
-        )
-        result = chain.invoke(input)
         return result
     except Exception as e:
-        return repr(e)
-    finally:
-        if product_data_loader:  
-            product_data_loader.close()
+        return f"An error occurred: {str(e)}"
 
-
-
-# def main():
-#     query = "Tìm sản phẩm có màu đen"
-#     result = product_search_tool(query) 
-#     print(result)
-
-# if __name__ == "__main__":
-#     main()

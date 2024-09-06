@@ -1,6 +1,8 @@
 <h1 align="center">ShoppingGPT🌼</h1>
 
-<img src="public/shoppinggpt_logo.png" alt="ShoppingGPT Logo" width="200" height="auto">
+<p align="center">
+  <img src="public/shoppinggpt_logo.png" alt="ShoppingGPT Logo" width="200" height="auto">
+</p>
 
 ShoppingGPT is an AI-powered intelligent shopping assistant that combines advanced natural language processing techniques to deliver a smart and seamless shopping experience. Built with a focus on performance, scalability, and user experience, ShoppingGPT integrates cutting-edge technologies to revolutionize e-commerce interactions.
 

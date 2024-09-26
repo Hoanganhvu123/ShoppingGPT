@@ -1,44 +1,66 @@
+from typing import List, Dict
 import numpy as np
-import os
-from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from typing import List, Tuple
+from semantic_router import Route, RouteLayer
+from semantic_router.encoders.tfidf import TfidfEncoder
+from shoppinggpt.router.samples_for_consine_algo import PRODUCT_SAMPLE, CHITCHAT_SAMPLE
 
-load_dotenv(r"E:\chatbot\ShoppingGPT\.env")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+# Constants
+PRODUCT_ROUTE_NAME = 'products'
+CHITCHAT_ROUTE_NAME = 'chitchat'
 
-embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-
-class Route:
-    def __init__(self, name: str, samples: List[str]):
-        self.name = name
-        self.samples = samples
 
 class SemanticRouter:
-    def __init__(self, embedding, routes: List[Route]):
-        self.routes = routes
-        self.embedding = embedding
-        self.routesEmbedding = {}
+    def __init__(self):
+        self.embedding = TfidfEncoder(score_threshold=0.5)
         
-        for route in self.routes:
-            self.routesEmbedding[route.name] = self.embedding.embed_documents(route.samples)
-    
-    def get_routes(self) -> List[Route]:
-        return self.routes
-    
-    def guide(self, query: str) -> Tuple[float, str]:
-        queryEmbedding = np.array(self.embedding.embed_query(query))
+        # Initialize the routes first
+        self.product_route = Route(
+            name=PRODUCT_ROUTE_NAME,
+            utterances=PRODUCT_SAMPLE,
+            score_threshold=0.5
+        )
+        self.chitchat_route = Route(
+            name=CHITCHAT_ROUTE_NAME,
+            utterances=CHITCHAT_SAMPLE,
+            score_threshold=0.5
+        )
+        self.routes = [self.product_route, self.chitchat_route]
         
-        queryEmbedding = queryEmbedding / np.linalg.norm(queryEmbedding)
-        scores = []
-        
-        for route in self.routes:
-            routesEmbedding = np.array(self.routesEmbedding[route.name])
-            routesEmbedding = routesEmbedding / np.linalg.norm(routesEmbedding, axis=1)[:, np.newaxis]
-            score = np.mean(np.dot(routesEmbedding, queryEmbedding))
-            scores.append((score, route.name))
-        
-        scores.sort(reverse=True)
-        return scores[0]
+        # Now fit the TfidfEncoder with the routes
+        self.embedding.fit(self.routes)
 
+        self.route_layer = RouteLayer(encoder=self.embedding, routes=self.routes)
+
+    def guide(self, query: str) -> str:
+        result = self.route_layer(query)
+        return result.name if result else "unknown"
+
+def main():
+    # Create an instance of SemanticRouter
+    router = SemanticRouter()
+
+    # Test queries
+    test_queries = [
+        "What's the price of this product?",
+        "What's your favorite food?",
+        "Does this product come in blue?",
+        "The weather is beautiful today!",
+        "Do you sell jackets in your store?",
+        "Can you recommend a good movie?",
+        "What's the return policy for this item?",
+        "Do you have any vegetarian options?",
+        "Are there any discounts on electronics?",
+        "Can you show me the latest smartphone models?",
+        "What's the shipping time for this product?",
+        "Do you have this shirt in a larger size?"
+    ]
+
+    # Test the router with each query
+    for query in test_queries:
+        result = router.guide(query)
+        print(f"Query: {query}")
+        print(f"Route: {result}")
+        print("---")
+
+if __name__ == "__main__":
+    main()

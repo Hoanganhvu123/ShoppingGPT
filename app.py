@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.memory import ConversationBufferMemory
-from shoppinggpt.router.semantic_router import (
+from shoppinggpt.router.lib_semantic_router import (
     SemanticRouter,
     PRODUCT_ROUTE_NAME,
     CHITCHAT_ROUTE_NAME

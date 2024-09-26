@@ -2,13 +2,15 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.memory import ConversationBufferMemory
-from shoppinggpt.router.semantic_router import (
+from shoppinggpt.router.lib_semantic_router import (
     SemanticRouter,
     PRODUCT_ROUTE_NAME,
     CHITCHAT_ROUTE_NAME
 )
 from shoppinggpt.chain import create_chitchat_chain
 from shoppinggpt.agent import ShoppingAgent
+import numpy as np
+from langchain_groq import ChatGroq
 
 # Load environment variables
 load_dotenv()
@@ -17,7 +19,8 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # LLM and Embedding setup
-LLM = ChatGoogleGenerativeAI(temperature=0, model="gemini-1.5-flash")
+# LLM = ChatGoogleGenerativeAI(temperature=0, model="gemini-1.5-flash")
+LLM = ChatGroq(temperature=0, model="gemma-7b-it")
 
 # Memory setup
 SHARED_MEMORY = ConversationBufferMemory(return_messages=True)
@@ -28,7 +31,12 @@ SEMANTIC_ROUTER = SemanticRouter()
 
 def handle_query(query: str) -> dict:
     """Handle user query and return response."""
-    guided_route = SEMANTIC_ROUTER.guide(query)
+    try:
+        guided_route = SEMANTIC_ROUTER.guide(query)
+        print(guided_route)
+    except RuntimeWarning:
+        # Handle the RuntimeWarning by setting a default route
+        guided_route = CHITCHAT_ROUTE_NAME
     
     if guided_route == CHITCHAT_ROUTE_NAME:
         chitchat_chain = create_chitchat_chain(LLM, SHARED_MEMORY)
@@ -37,7 +45,7 @@ def handle_query(query: str) -> dict:
         agent = ShoppingAgent(LLM, SHARED_MEMORY)
         response = agent.invoke(query)  # Pass query directly, not as a dict
     else:
-        response = "Unknown query type"
+        response = "have error"
     
     # Get content from response
     content = (
@@ -68,7 +76,9 @@ def main():
             break
         
         try:
-            result = handle_query(user_input)
+            # Suppress the RuntimeWarning
+            with np.errstate(invalid='ignore'):
+                result = handle_query(user_input)
             print(f"AI ({result['type']}): {result['response']}")
         except Exception as e:
             print(f"An error occurred: {str(e)}")

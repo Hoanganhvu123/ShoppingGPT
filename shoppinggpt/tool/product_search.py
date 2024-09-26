@@ -6,7 +6,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from config import GOOGLE_API_KEY, DATA_PRODUCT_PATH
+from shoppinggpt.config import GOOGLE_API_KEY, DATA_PRODUCT_PATH
 
 PRODUCT_RECOMMENDATION_PROMPT = """
     You are a chatbot assistant specializing in providing product information and

@@ -3,7 +3,7 @@
 <p align="center">
   <img src="public/shoppinggpt_logo.png" alt="ShoppingGPT Logo" width="200" height="auto">
 </p>
-
+ 
 ShoppingGPT is an AI-powered intelligent shopping assistant that combines advanced natural language processing techniques to deliver a smart and seamless shopping experience. Built with a focus on performance, scalability, and user experience, ShoppingGPT integrates cutting-edge technologies to revolutionize e-commerce interactions.
 
 ## Features ✨
@@ -49,11 +49,29 @@ This architecture enables efficient query routing, context-aware responses, and 
 
 ### Key Components
 
-- **Semantic Router**: Uses `GoogleGenerativeAIEmbeddings` to efficiently classify and route user queries.
 - **RAG System**: Combines FAISS vector store for policy information and SQLite for product data, ensuring fast and relevant information retrieval.
 - **LLM Integration**: Utilizes `ChatGoogleGenerativeAI` with the Gemini-1.5-flash model to generate human-like responses.
 - **Product Search**: Implements a robust `ProductDataLoader` class for efficient SQLite query execution and result formatting.
 - **Policy Search**: Uses FAISS for fast similarity search on company policies and guidelines.
+
+## Advanced Routing and Classification 🧭
+
+ShoppingGPT utilizes advanced routing and classification techniques to enhance its performance:
+
+1. **Semantic Router**: We implement the [Semantic Router](https://github.com/aurelio-labs/semantic-router) library for efficient query routing. This allows for superfast decision-making and intelligent processing of multi-modal data.
+
+2. **Cosine Similarity**: The system employs cosine similarity algorithm to measure the semantic similarity between user queries and predefined routes, ensuring accurate classification and routing.
+
+3. **Custom Hugging Face Model**: We use a fine-tuned Hugging Face model specifically trained for classifying text as either chitchat or product-related. This model enhances the accuracy of query classification.
+
+## Model 🧠
+
+The text classification model used in this project is available on Hugging Face:
+
+[hang1704/opendaisy](https://huggingface.co/hang1704/opendaisy)
+
+This model is used for classifying user queries and enhancing the overall performance of ShoppingGPT. Feel free to explore and use it in your own projects!
+
 
 ## Data Structure 🗂️
 
@@ -166,6 +184,7 @@ We welcome contributions to ShoppingGPT! Here's how you can help:
 6. Open a Pull Request
 
 Please make sure to update tests as appropriate and adhere to the project's coding standards.
+
 
 ## License 📄
 

@@ -73,6 +73,7 @@ The text classification model used in this project is available on Hugging Face:
 This model is used for classifying user queries and enhancing the overall performance of ShoppingGPT. Feel free to explore and use it in your own projects!
 
 
+
 ## Data Structure 🗂️
 
 Product data is stored in SQLite and includes the following fields:

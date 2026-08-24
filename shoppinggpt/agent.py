@@ -1,8 +1,16 @@
+from datetime import datetime
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain.memory import ConversationBufferMemory
 from shoppinggpt.tool.product_search import product_search_tool
 from shoppinggpt.tool.policy_search import policy_search_tool
 from langchain.prompts import ChatPromptTemplate
+
+
+def format_agent_output(output: str) -> str:
+    """Format and clean agent output response."""
+    if not output:
+        return ""
+    return output.strip()
 
 
 class ShoppingAgent:
@@ -36,4 +44,5 @@ class ShoppingAgent:
         )
         ai_message = agent_executor.invoke(inputs)
         agent_output = ai_message['output']
-        return agent_output
+        return format_agent_output(agent_output)
+
